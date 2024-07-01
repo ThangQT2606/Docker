@@ -1,0 +1,36 @@
+---
+- name: Lấy thông tin container từ các server
+  hosts: servers
+  tasks:
+    - name: Lấy thông tin các container đang chạy
+      shell: "docker ps --format '{% raw %}{{ .Names }} {{ .Status }}{% endraw %}'"
+      register: docker_ps_output
+
+    - name: Ghi thông tin container vào file tạm thời trên server
+      copy:
+        content: |
+          Server {{ inventory_hostname }}:
+          {{ docker_ps_output.stdout_lines | join('---') }}
+          ---
+        dest: /tmp/docker_info_{{ inventory_hostname }}.txt
+
+- name: Tổng hợp thông tin từ tất cả các server
+  hosts: localhost
+  tasks:
+    - name: Tạo file ketqua.txt (nếu chưa tồn tại)
+      file:
+        path: ./ketqua.txt
+        state: touch
+
+    - name: Thu thập thông tin từ các file tạm thời trên các server
+      fetch:
+        src: /tmp/docker_info_{{ item }}.txt
+        dest: /tmp/
+        flat: yes
+      with_items: "{{ groups['servers'] }}"
+
+    - name: Ghi thông tin vào file ketqua.txt
+      blockinfile:
+        path: ./ketqua.txt
+        block: "{{ lookup('file', '/tmp/docker_info_' + item + '.txt') }}"
+      with_items: "{{ groups['servers'] }}"
