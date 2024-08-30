@@ -1,7 +1,6 @@
 import onnxruntime, pickle, time
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
 
 encode = pickle.load(open('./models/OneHotEncoder.pkl', 'rb'))
 stand = pickle.load(open('./models/MinMaxScaler.pkl', 'rb'))
@@ -13,7 +12,9 @@ class banking(object):
         self.input_name, self.output_name = self.initialize_model(model_path)
 
     def initialize_model(self, path):
-        self.session = onnxruntime.InferenceSession(path,
+        so = onnxruntime.SessionOptions()
+        so.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_ENABLE_ALL
+        self.session = onnxruntime.InferenceSession(path, sess_options=so,
                                                     providers=onnxruntime.get_available_providers())
         input_name = self.session.get_inputs()[0].name
         output_name = self.session.get_outputs()[0].name
