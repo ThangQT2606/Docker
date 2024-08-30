@@ -1,4 +1,4 @@
-onnxruntime==1.18.0
+onnxruntime==1.19.1
 category-encoders==2.6.3
 scikit-learn==1.2.2
 numpy==1.26.4
