@@ -4,10 +4,9 @@ import pandas as pd
 
 encode = pickle.load(open('./models/OneHotEncoder.pkl', 'rb'))
 stand = pickle.load(open('./models/MinMaxScaler.pkl', 'rb'))
-# model_path = './models/model.onnx'
 
 class banking(object):
-    def __init__(self, model_path):
+    def __init__(self, model_path = f'./models/model.onnx'):
         self.classes = ["Not Fully Paid", "Fully Paid"]
         self.input_name, self.output_name = self.initialize_model(model_path)
 

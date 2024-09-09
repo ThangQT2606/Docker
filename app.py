@@ -1,12 +1,10 @@
-import numpy as np
 import pandas as pd
 import streamlit as st
 from loan import banking
-from PIL import Image
 import base64
 
-model_path = f'./models/model.onnx'
-my_model = banking(model_path)
+# Gọi model dự đoán
+my_model = banking()
 
 # Đường dẫn tới hình ảnh
 image_path = './images/bank.png'
